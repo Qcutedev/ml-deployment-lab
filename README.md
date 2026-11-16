@@ -102,29 +102,50 @@ python app.py              # เปิด http://127.0.0.1:5000/
 
 ## ผลการทดสอบ (Screenshots)
 
-### 1. Build image และ run container สำเร็จ
+### 1. โครงสร้างไฟล์โปรเจ็ค
 
-`docker build -t ds-ml-service .` → train model ได้ `model/model.pkl` และ `docker run` → gunicorn รันที่ `0.0.0.0:5000`
+![project structure](screenshots/1_project_structure.png)
 
-![docker build and run](screenshots/04_docker_build_run.png)
+### 2. รัน container สำเร็จ (`Listening at: http://0.0.0.0:5000`) และหน้าเว็บแสดงผลการทำนาย
 
-### 2. หน้าเว็บทำนายผลสำเร็จ
+```powershell
+docker run --rm -p 5000:5000 ds-ml-service
+```
 
-กด **Use sample values** แล้วกด **Predict** → `Prediction: 4.029`
+![container running and web](screenshots/2_container_running_and_web.png)
 
-![prediction success](screenshots/02_prediction_success.png)
+### 3. หน้าเว็บ <http://127.0.0.1:5000/> กรอกค่าทดสอบ แล้วกด Predict
 
-### 3. ตรวจสอบสถานะ `/health`
+กด **Use sample values** แล้วกด **Predict** ได้ `Prediction: 4.029`
 
-![health check](screenshots/03_health_check.png)
+![web prediction](screenshots/3_web_prediction.png)
 
-### 4. ทดสอบ API `/predict` ด้วย PowerShell
+### 4. Docker image
 
-![api test](screenshots/05_api_test_powershell.png)
+```powershell
+docker images ds-ml-service
+```
 
-### 5. หน้าฟอร์มรับค่าฟีเจอร์
+![docker images](screenshots/4_docker_images.png)
 
-![web form](screenshots/01_web_form.png)
+### 5. ทดสอบ API `/predict` ด้วย PowerShell (`Invoke-WebRequest`)
+
+```powershell
+Invoke-WebRequest -Uri "http://127.0.0.1:5000/predict" `
+  -Method POST `
+  -Body '{"features":[8.3,25.0,6.0,1.0,1200,3.0,34.2,-118.3]}' `
+  -ContentType "application/json" -UseBasicParsing
+```
+
+> Windows PowerShell 5.1 จะถามยืนยันก่อนรัน `Invoke-WebRequest` ถ้าไม่ใส่ `-UseBasicParsing` (security prompt) ใส่ flag นี้แล้วผลลัพธ์เหมือนเดิม
+
+![invoke-webrequest](screenshots/5_api_invoke_webrequest.png)
+
+### เพิ่มเติม: ผล `docker build` และหน้า `/health`
+
+![docker build](screenshots/extra_docker_build.png)
+
+![health check](screenshots/extra_health_check.png)
 
 ---
 
